@@ -1,26 +1,21 @@
 ---
 title: "Statistical Inference Course Project"
 author: "Edilmo Palencia"
-output: pdf_document
+output: 
+  pdf_document: 
+    fig_height: 3
 ---
 
 ## Overview
-In this report we analize the exponetial distribution looking at the behaviour of the mean, the variance and the distribution. In order to achive this, we are going to run multiple simulations and compare their behaviors with theorical one.
-
+In this report we analize the exponetial distribution looking at the behaviour of the mean, the variance and the distribution. In order to achive this, we are going to run multiple simulations and compare their behaviors with the theorical one.
 
 ## Simulations
-In the next chunk of code we are going to:
-- Set all the parameters of the evaluation.
--- The rate or lambda value to use for all the simulations.
--- The size of the large sample.
--- The size of short samples.
--- The amount of short samples to generate.
-- Generate all the simulations.
--- One large sample of 1000 simulations.
--- One thousand short samples of 40 simulations.
-- Compute the mean and the standar deviation for all the samples
+In the next chunk of code we are going to:  
+- Set all the parameters of the evaluation: the rate or lambda value to use for all the simulations; the size of the large sample; the size of short samples; the amount of short samples to generate.  
+- Generate all the simulations: one large sample of 1000 simulations; one thousand short samples of 40 simulations.  
+- Compute the mean and the standar deviation for all the samples.  
 
-```{r simulations, echo = TRUE}
+```{r simulations1, echo = FALSE}
 # Set value of lambda for all the experiments
 lambda <- 0.2
 # Set the size of a large sample
@@ -33,6 +28,11 @@ n.me <- 1000
 mean.theorical <- 1/lambda
 # Set the theorical standar deviation for the exponential distribution
 sd.theorical <- 1/lambda
+# Set the theorical variance for the exponential distribution
+variance.theorical <- sd.theorical^2
+```
+
+```{r simulations2, echo = TRUE}
 # Generate the large sample
 simulation.th <- rexp(n.th, lambda)
 # Compute the mean of the large sample
@@ -47,26 +47,23 @@ simulations.me.means <- sapply(simulations.me, mean)
 simulations.me.sd <- sapply(simulations.me, sd)
 ```
 
-
 ## Sample Mean versus Theoretical Mean
-The next chunk of code is a example of how was generated the 3 figures showed below. Specifically, the code showed correspond to the first figure.
+The next chunk of code is a example of how was generated the 3 figures showed below. Specifically, the code showed correspond to the last figure.  
 
-```{r sample_mean_vs_theorical_mean_1, echo = TRUE}
+```{r sample_mean_vs_theorical_mean_1, echo = FALSE}
 library(ggplot2)
 # Compute the cumulative average of the simulation
 y <- cumsum(simulations.me[[1]])/(1:n.sa)
 # Create the ggplot object with the data
 g.svm.1 <- ggplot(data.frame(x = 1 : n.sa, y = y), aes(x = x, y = y)) 
 # Add a red line for the cumulative average of the simulation
-g.svm.1 <- g.svm.1 + geom_line(aes(colour = "Cumulative Mean"))
+g.svm.1 <- g.svm.1 + geom_line(colour = "red")
 # Add a blue lines for the sample mean
-g.svm.1 <- g.svm.1 + geom_hline(aes(yintercept = simulations.me.means[[1]], colour = "Sample Mean"), show_guide = TRUE)
+g.svm.1 <- g.svm.1 + geom_hline(yintercept = simulations.me.means[[1]], colour = "blue", show_guide = FALSE)
 # Add a green line for the theorical mean
-g.svm.1 <- g.svm.1 + geom_hline(aes(yintercept = mean.theorical, colour = "Theorical Mean"), show_guide = TRUE)
+g.svm.1 <- g.svm.1 + geom_hline(yintercept = mean.theorical, colour = "green", show_guide = FALSE)
 # Add the labels of the axis and the title
-g.svm.1 <- g.svm.1 + labs(x = "Simulation", y = "Mean") + ggtitle("Sample mean of 40 simulations")
-# Add the legend 
-g.svm.1 <- g.svm.1 + scale_colour_manual("", breaks=c("Cumulative Mean", "Sample Mean", "Theorical Mean"), values=c('Cumulative Mean'='red', 'Sample Mean'='blue', 'Theorical Mean'='green'))
+g.svm.1 <- g.svm.1 + labs(x = "Simulation", y = "Mean") + ggtitle("Sample of 40 simulations")
 ```
 
 ```{r sample_mean_vs_theorical_mean_2, echo = FALSE}
@@ -75,24 +72,22 @@ y <- cumsum(c(simulations.me[[1]], simulations.me[[2]], simulations.me[[3]]))/(1
 # Create the ggplot object with the data
 g.svm.2 <- ggplot(data.frame(x = 1 : (3*n.sa), y = y), aes(x = x, y = y)) 
 # Add a red line for the cumulative average of the simulation
-g.svm.2 <- g.svm.2 + geom_line(aes(colour = "Cumulative Mean"))
+g.svm.2 <- g.svm.2 + geom_line(colour = "red")
 # Add a blue line for the samples means
-g.svm.2 <- g.svm.2 + geom_hline(aes(yintercept = simulations.me.means[[1]], colour = "Sample Mean"), show_guide = TRUE)
-g.svm.2 <- g.svm.2 + geom_hline(aes(yintercept = simulations.me.means[[2]], colour = "Sample Mean"), show_guide = TRUE)
-g.svm.2 <- g.svm.2 + geom_hline(aes(yintercept = simulations.me.means[[3]], colour = "Sample Mean"), show_guide = TRUE)
+g.svm.2 <- g.svm.2 + geom_hline(yintercept = simulations.me.means[[1]], colour = "blue", show_guide = FALSE)
+g.svm.2 <- g.svm.2 + geom_hline(yintercept = simulations.me.means[[2]], colour = "blue", show_guide = FALSE)
+g.svm.2 <- g.svm.2 + geom_hline(yintercept = simulations.me.means[[3]], colour = "blue", show_guide = FALSE)
 # Add a green line for the theorical mean
-g.svm.2 <- g.svm.2 + geom_hline(aes(yintercept = mean.theorical, colour = "Theorical Mean"), show_guide = TRUE)
+g.svm.2 <- g.svm.2 + geom_hline(yintercept = mean.theorical, colour = "green", show_guide = FALSE)
 # Add the labels of the axis and the title
-g.svm.2 <- g.svm.2 + labs(x = "Simulation", y = "Mean") + ggtitle("Means of 3 samples of 40 simulations")
-# Add the legend 
-g.svm.2 <- g.svm.2 + scale_colour_manual("", breaks=c("Cumulative Mean", "Sample Mean", "Theorical Mean"), values=c('Cumulative Mean'='red', 'Sample Mean'='blue', 'Theorical Mean'='green'))
+g.svm.2 <- g.svm.2 + labs(x = "Simulation", y = "Mean") + ggtitle("3 samples of 40 simulations")
 ```
 
-```{r sample_mean_vs_theorical_mean_3, echo = FALSE}
+```{r sample_mean_vs_theorical_mean_3, echo = TRUE}
 # Compute the cumulative average of the simulation
 y <- cumsum(simulation.th)/(1:n.th)
 # Create the ggplot object with the data
-g.svm.3 <- g.svm.3 <- ggplot(data.frame(x = 1 : n.th, y = y), aes(x = x, y = y)) 
+g.svm.3 <- ggplot(data.frame(x = 1 : n.th, y = y), aes(x = x, y = y)) 
 # Add a red line for the cumulative average of the simulation
 g.svm.3 <- g.svm.3 + geom_line(aes(colour = "Cumulative Mean"))
 # Add a blue line for the sample mean of the simulation
@@ -100,12 +95,12 @@ g.svm.3 <- g.svm.3 + geom_hline(aes(yintercept = simulation.th.mean, colour = "S
 # Add a green line for the theorical mean
 g.svm.3 <- g.svm.3 + geom_hline(aes(yintercept = mean.theorical, colour = "Theorical Mean"), show_guide = TRUE)
 # Add the labels of the axis and the title
-g.svm.3 <- g.svm.3 + labs(x = "Simulation", y = "Mean") + ggtitle("Sample mean of 1000 simulations")
+g.svm.3 <- g.svm.3 + labs(x = "Simulation", y = "Mean") + ggtitle("Sample of 1000 simulations")
 # Add the legend
 g.svm.3 <- g.svm.3 + scale_colour_manual("", breaks=c("Cumulative Mean", "Sample Mean", "Theorical Mean"), values=c('Cumulative Mean'='red', 'Sample Mean'='blue', 'Theorical Mean'='green'))
 ```
 
-```{r Print all the plots in the same view, echo = FALSE}
+```{r print_all_means, echo = FALSE}
 library(grid)
 grid.newpage()
 pushViewport(viewport(layout = grid.layout(2, 2)))
@@ -121,9 +116,156 @@ These figures allows see how the mean of a sample becomes more and more equal to
 
 
 ## Sample Variance versus Theoretical Variance
----Include figures (output from R) with titles. Highlight the variances you are comparing. Include text that explains your understanding of the differences of the variances.
+Following a procedure very similar to the one used to compare the means, it was generated the figures showed bellow.  
+
+```{r sample_variance_vs_theorical_variance_1, echo = FALSE}
+# Compute the cumulative variance of the simulation
+y <- cumsum((simulations.me[[1]]-simulations.me.means[[1]])^2)/(1:n.sa)
+# Create the ggplot object with the data
+g.svm.1 <- ggplot(data.frame(x = 1 : n.sa, y = y), aes(x = x, y = y)) 
+# Add a red line for the cumulative variance of the simulation
+g.svm.1 <- g.svm.1 + geom_line(colour = "red")
+# Add a blue lines for the sample variance
+g.svm.1 <- g.svm.1 + geom_hline(yintercept = ((simulations.me.sd[[1]])^2), colour = "blue", show_guide = FALSE)
+# Add a green line for the theorical variance
+g.svm.1 <- g.svm.1 + geom_hline(yintercept = variance.theorical, colour = "green", show_guide = FALSE)
+# Add the labels of the axis and the title
+g.svm.1 <- g.svm.1 + labs(x = "Simulation", y = "Variance") + ggtitle("Sample of 40 simulations")
+```
+
+```{r sample_variance_vs_theorical_variance_2, echo = FALSE}
+# Compute the cumulative variance of the simulation
+y <- cumsum(c((simulations.me[[1]]-simulations.me.means[[1]])^2, (simulations.me[[2]]-simulations.me.means[[2]])^2, (simulations.me[[3]]-simulations.me.means[[3]])^2))/(1:(3*n.sa))
+# Create the ggplot object with the data
+g.svm.2 <- ggplot(data.frame(x = 1 : (3*n.sa), y = y), aes(x = x, y = y)) 
+# Add a red line for the cumulative variance of the simulation
+g.svm.2 <- g.svm.2 + geom_line(colour = "red")
+# Add a blue line for the samples variances
+g.svm.2 <- g.svm.2 + geom_hline(yintercept = ((simulations.me.sd[[1]])^2), colour = "blue", show_guide = FALSE)
+g.svm.2 <- g.svm.2 + geom_hline(yintercept = ((simulations.me.sd[[2]])^2), colour = "blue", show_guide = FALSE)
+g.svm.2 <- g.svm.2 + geom_hline(yintercept = ((simulations.me.sd[[3]])^2), colour = "blue", show_guide = FALSE)
+# Add a green line for the theorical variance
+g.svm.2 <- g.svm.2 + geom_hline(yintercept = variance.theorical, colour = "green", show_guide = FALSE)
+# Add the labels of the axis and the title
+g.svm.2 <- g.svm.2 + labs(x = "Simulation", y = "Variance") + ggtitle("3 samples of 40 simulations")
+```
+
+```{r sample_variance_vs_theorical_variance_3, echo = FALSE}
+# Compute the cumulative variance of the simulation
+y <- cumsum((simulation.th-simulation.th.mean)^2)/(1:n.th)
+# Create the ggplot object with the data
+g.svm.3 <- ggplot(data.frame(x = 1 : n.th, y = y), aes(x = x, y = y)) 
+# Add a red line for the cumulative variance of the simulation
+g.svm.3 <- g.svm.3 + geom_line(aes(colour = "Cumulative Variance"))
+# Add a blue line for the sample variance of the simulation
+g.svm.3 <- g.svm.3 + geom_hline(aes(yintercept = ((simulation.th.sd)^2), colour = "Sample Variance"), show_guide = TRUE)
+# Add a green line for the theorical variance
+g.svm.3 <- g.svm.3 + geom_hline(aes(yintercept = variance.theorical, colour = "Theorical Variance"), show_guide = TRUE)
+# Add the labels of the axis and the title
+g.svm.3 <- g.svm.3 + labs(x = "Simulation", y = "Variance") + ggtitle("Sample of 1000 simulations")
+# Add the legend
+g.svm.3 <- g.svm.3 + scale_colour_manual("", breaks=c("Cumulative Variance", "Sample Variance", "Theorical Variance"), values=c('Cumulative Variance'='red', 'Sample Variance'='blue', 'Theorical Variance'='green'))
+```
+
+```{r print_all_variance, echo = FALSE}
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(2, 2)))
+print(g.svm.1, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(g.svm.2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+print(g.svm.3, vp = viewport(layout.pos.row = 2, layout.pos.col = c(1,2)))
+```
+
+These figures allows see how the variance of a sample becomes more and more equal to the theorical variance when we increase the amount of simulations present in the sample. The red lines ilustrate this, they represent the cumulative variance of the sample (Law of Large Numbers). The blue and green line show the Sample and the Theorical variances respectivaly.  
+- The first figure show the behaviour of a short sample of Variance of `r format((simulations.me.sd[[1]])^2)` and a difference with the theorical of `r format(((simulations.me.sd[[1]])^2) - variance.theorical)`.  
+- The second figure show the behaviour of tree short sample of Variances of `r format(((simulations.me.sd[[1]])^2))`, `r format(((simulations.me.sd[[2]])^2))`, `r format(((simulations.me.sd[[3]])^2))`, and a difference with the theorical of `r format(((simulations.me.sd[[1]])^2) - variance.theorical)`, `r format(((simulations.me.sd[[2]])^2) - variance.theorical)`, `r format(((simulations.me.sd[[3]])^2) - variance.theorical)` respectivaly.  
+- The third figure show the behaviour of a large sample of Means of `r format(((simulation.th.sd)^2))` and a difference with the theorical of `r format(((simulation.th.sd)^2) - variance.theorical)`.  
 
 
 ## Distribution
----Via figures and text, explain how one can tell the distribution is approximately normal.
+The two figures below show that the distribution of the means of the short samples is aproximately normal.  
+- The first figure normalize the means following the CLT and draw a standard normal to compare with.  
+- The second figure compares the distribution of the means directly with a normal of mean equal to the theorical mean for the exponential, standard deviation equal to $\sigma^2 / n$.  
+```{r distribution1, echo = TRUE}
+# Compute the normalize means of the simulations following CLT
+x <- ((sqrt(n.sa)*(simulations.me.means-mean.theorical))/sd.theorical)
+# Create the ggplot object with the data
+g.dis.1 <- ggplot(data.frame(x = x), aes(x = x)) 
+# Draw a histogram
+g.dis.1 <- g.dis.1 + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..))
+# Draw a standard normal
+g.dis.1 <- g.dis.1 + stat_function(fun = dnorm, size = 2)
+# Add the labels of the axis and the title
+g.dis.1 <- g.dis.1 + labs(x = "Standard Mean", y = "Density") + ggtitle("Applying CLT to 1000 sample means") + theme(plot.title=element_text(family="Times", face="bold", size=10))
+```
 
+```{r distribution2, echo = FALSE}
+# Assign the means
+x <- simulations.me.means
+# Create the ggplot object with the data
+g.dis.2 <- ggplot(data.frame(x = x), aes(x = x)) 
+# Draw a histogram
+g.dis.2 <- g.dis.2 + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..))
+# Draw a normal with theorical mean and the modified standard deviation following CLT
+g.dis.2 <- g.dis.2 + stat_function(fun = dnorm, args = list(mean=mean.theorical, sd=(variance.theorical/n.sa)), size = 2)
+# Add the labels of the axis and the title
+g.dis.2 <- g.dis.2 + labs(x = "Mean", y = "") + ggtitle("Distribution of 1000 sample means vs Normal") + theme(plot.title=element_text(family="Times", face="bold", size=10))
+```
+
+```{r print_all_distribution, echo = FALSE}
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(1, 2)))
+print(g.dis.1, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(g.dis.2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+  
+  
+******  
+  
+  
+## Appendix
+
+In this appendix we are including all the chuncks of codes in strict order.  
+
+Simulations
+```{r chunk1, ref.label='simulations1', eval=FALSE}
+
+```
+```{r chunk2, ref.label='simulations2', eval=FALSE}
+
+```
+Sample Mean versus Theoretical Mean
+```{r chunk3, ref.label='sample_mean_vs_theorical_mean_1', eval=FALSE}
+
+```
+```{r chunk4, ref.label='sample_mean_vs_theorical_mean_2', eval=FALSE}
+
+```
+```{r chunk5, ref.label='sample_mean_vs_theorical_mean_3', eval=FALSE}
+
+```
+```{r chunk6, ref.label='print_all_means', eval=FALSE}
+
+```
+Sample Variance versus Theoretical Variance
+```{r chunk7, ref.label='sample_variance_vs_theorical_variance_1', eval=FALSE}
+
+```
+```{r chunk8, ref.label='sample_variance_vs_theorical_variance_2', eval=FALSE}
+
+```
+```{r chunk9, ref.label='sample_variance_vs_theorical_variance_3', eval=FALSE}
+
+```
+```{r chunk10, ref.label='print_all_variance', eval=FALSE}
+
+```
+Distribution
+```{r chunk11, ref.label='distribution1', eval=FALSE}
+
+```
+```{r chunk12, ref.label='distribution2', eval=FALSE}
+
+```
+```{r chunk13, ref.label='print_all_distribution', eval=FALSE}
+
+```
